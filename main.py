@@ -1,8 +1,22 @@
 import random
+import sys
 
 def choose_word():
-    words = ["apple", "mango", "grape", "lemon", "melon", "berry", "peach"]
-    return random.choice(words).upper()
+    words = []
+    try:
+        with open("words.txt", "r") as file:
+            for line in file:
+                word = line.strip().upper()
+                if len(word) == 5 and word.isalpha():
+                    words.append(word)
+    except FileNotFoundError:
+        print("Error: 'words.txt' not found.")
+        sys.exit() 
+    
+    if not words:
+        print("Error: No valid words found in 'words.txt'.")
+        sys.exit()
+    return random.choice(words)
 
 def get_guess():
     while True:
