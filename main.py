@@ -1,8 +1,7 @@
 import random
 import sys
 import base64
-from encription import encode_base64
-from encription import decode_base64
+from encription import encode_base64 , decode_base64
 
 def choose_word(difficulty):
     words = []
