@@ -1,5 +1,16 @@
 import random
 import sys
+import base64
+
+def encode_base64(text):
+    text_bytes = text.encode('ascii')
+    base64_bytes = base64.b64encode(text_bytes)
+    return base64_bytes.decode('ascii')
+
+def decode_base64(base64_string):
+    base64_bytes = base64_string.encode('ascii')
+    text_bytes = base64.b64decode(base64_bytes)
+    return text_bytes.decode('ascii').upper()
 
 def choose_word(difficulty):
     words = []
@@ -22,8 +33,7 @@ def choose_word(difficulty):
 
     return random.choice(words)
 
-def get_guess(difficulty):
-    word_length = difficulty + 3
+def get_guess(word_length):
     while True:
         guess = input(f"Guess the {word_length}-letter word (or exit): ").upper()
         if guess == "EXIT":
@@ -56,37 +66,79 @@ def display_feedback(feedback):
             print(f"\033[90m{letter}\033[0m", end="")
     print()
 
-def play_wordle():
-    while True:
-        difficulty = int(input("Choose difficulty (1-5): "))
-        if difficulty < 1 or difficulty > 5:
-            print("Invalid difficulty. Please choose between 1 and 5.")
-            continue
+def play_wordle(secret_word):
+    word_length = len(secret_word)
+    print("Welcome to Wordle!")
+    print(f"Guess the {word_length}-letter word in 6 tries.")
 
-        secret_word = choose_word(difficulty)
-        print("Welcome to Wordle!")
-        print("Guess the word in 6 tries.")
-
-        for attempt in range(1, 7):
-            guess = get_guess(difficulty)
-            if guess == "":
-                print("Exiting. Word was", secret_word)
-                break
-
-            feedback = check_guess(secret_word, guess)
-            display_feedback(feedback)
-
-            if all(status == 'G' for _, status in feedback):
-                print(f"You won in {attempt} tries!")
-                break
-
-            print(f"Try {attempt}/6")
-
-        else:
-            print(f"You lost. The word was {secret_word}.")
-
-        play_again = input("Play again? (yes/no): ").lower()
-        if play_again != "yes":
+    for attempt in range(1, 7):
+        guess = get_guess(word_length)
+        if guess == "":
+            print("Exiting. Word was", secret_word)
             break
 
-play_wordle()
+        feedback = check_guess(secret_word, guess)
+        display_feedback(feedback)
+
+        if all(status == 'G' for _, status in feedback):
+            print(f"You won in {attempt} tries!")
+            break
+
+        print(f"Try {attempt}/6")
+
+    else:
+        print(f"You lost. The word was {secret_word}.")
+
+def create_custom_wordle():
+    custom_word = input("Enter the secret word for your friend: ").strip().upper()
+    if not custom_word.isalpha():
+        print("Error: Secret word must only contain letters.")
+        return None
+
+    encoded_word = encode_base64(custom_word)
+    print("\n--- Custom Wordle Created! ---")
+    print("Give the following encoded word to your friend:")
+    print(f"Encoded Word: {encoded_word}")
+    print("-----------------------------------------------\n")
+    return encoded_word
+
+def play_custom_wordle():
+    encoded_word_input = input("Enter the encoded word: ").strip()
+    try:
+        secret_word = decode_base64(encoded_word_input)
+        if secret_word:
+            play_wordle(secret_word)
+        else:
+            print("Error: Invalid encoded word.")
+    except Exception:
+        print("Error: Invalid encoded word format.")
+
+def main():
+    while True:
+        print("\n--- Wordle Game ---")
+        print("1. Play Random Wordle")
+        print("2. Create Custom Wordle")
+        print("3. Play Custom Wordle")
+        print("4. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            difficulty = int(input("Choose difficulty (1-5): "))
+            if 1 <= difficulty <= 5:
+                secret_word = choose_word(difficulty)
+                play_wordle(secret_word)
+            else:
+                print("Invalid difficulty. Please choose between 1 and 5.")
+        elif choice == '2':
+            create_custom_wordle()
+        elif choice == '3':
+            play_custom_wordle()
+        elif choice == '4':
+            print("Exiting Wordle.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
