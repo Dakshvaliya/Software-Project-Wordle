@@ -65,19 +65,20 @@ def play_wordle(secret_word):
         guess = get_guess(word_length)
         if guess == "":
             print("Exiting. Word was", secret_word)
-            break
+            return False
 
         feedback = check_guess(secret_word, guess)
         display_feedback(feedback)
 
         if all(status == 'G' for _, status in feedback):
             print(f"You won in {attempt} tries!")
-            break
+            return True
 
         print(f"Try {attempt}/6")
 
     else:
         print(f"You lost. The word was {secret_word}.")
+        return False
 
 def create_custom_wordle():
     custom_word = input("Enter the secret word for your friend: ").strip().upper()
@@ -97,7 +98,13 @@ def play_custom_wordle():
     try:
         secret_word = encription.decode_base64(encoded_word_input)
         if secret_word:
-            play_wordle(secret_word)
+            play_again = True
+            while play_again:
+                game_result = play_wordle(secret_word)
+                if game_result is not None:
+                    play_again_choice = input("Play again? (yes/no): ").lower()
+                    if play_again_choice != 'yes':
+                        play_again = False
         else:
             print("Error: Invalid encoded word.")
     except Exception:
@@ -116,8 +123,14 @@ def main():
         if choice == '1':
             difficulty = int(input("Choose difficulty (1-5): "))
             if 1 <= difficulty <= 5:
-                secret_word = choose_word(difficulty)
-                play_wordle(secret_word)
+                play_again = True
+                while play_again:
+                    secret_word = choose_word(difficulty)
+                    game_result = play_wordle(secret_word)
+                    if game_result is not None:
+                        play_again_choice = input("Play again? (yes/no): ").lower()
+                        if play_again_choice != 'yes':
+                            play_again = False
             else:
                 print("Invalid difficulty. Please choose between 1 and 5.")
         elif choice == '2':
