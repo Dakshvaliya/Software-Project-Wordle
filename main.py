@@ -1,7 +1,6 @@
 import random
 import sys
-import base64
-from encription import encode_base64 , decode_base64
+import encription
 
 def choose_word(difficulty):
     words = []
@@ -86,7 +85,7 @@ def create_custom_wordle():
         print("Error: Secret word must only contain letters.")
         return None
 
-    encoded_word = encode_base64(custom_word)
+    encoded_word = encription.encode_base64(custom_word)
     print("\n--- Custom Wordle Created! ---")
     print("Give the following encoded word to your friend:")
     print(f"Encoded Word: {encoded_word}")
@@ -96,7 +95,7 @@ def create_custom_wordle():
 def play_custom_wordle():
     encoded_word_input = input("Enter the encoded word: ").strip()
     try:
-        secret_word = decode_base64(encoded_word_input)
+        secret_word = encription.decode_base64(encoded_word_input)
         if secret_word:
             play_wordle(secret_word)
         else:
