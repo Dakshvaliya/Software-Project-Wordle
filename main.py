@@ -98,13 +98,7 @@ def play_custom_wordle():
     try:
         secret_word = encription.decode_base64(encoded_word_input)
         if secret_word:
-            play_again = True
-            while play_again:
-                game_result = play_wordle(secret_word)
-                if game_result is not None:
-                    play_again_choice = input("Play again? (yes/no): ").lower()
-                    if play_again_choice != 'yes':
-                        play_again = False
+            play_wordle(secret_word)
         else:
             print("Error: Invalid encoded word.")
     except Exception:
@@ -123,14 +117,8 @@ def main():
         if choice == '1':
             difficulty = int(input("Choose difficulty (1-5): "))
             if 1 <= difficulty <= 5:
-                play_again = True
-                while play_again:
-                    secret_word = choose_word(difficulty)
-                    game_result = play_wordle(secret_word)
-                    if game_result is not None:
-                        play_again_choice = input("Play again? (yes/no): ").lower()
-                        if play_again_choice != 'yes':
-                            play_again = False
+                secret_word = choose_word(difficulty)
+                play_wordle(secret_word)
             else:
                 print("Invalid difficulty. Please choose between 1 and 5.")
         elif choice == '2':
