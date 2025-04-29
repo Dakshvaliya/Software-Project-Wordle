@@ -2,7 +2,6 @@
 import random
 import sys
 import encription # Custom library
-import base64 # Importing the base64 library
 
 # This chooses a random word for the game based on the difficulty level frm the predetermined word list
 def choose_word(difficulty):
